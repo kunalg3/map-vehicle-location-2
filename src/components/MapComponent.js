@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import axios from 'axios';
 
 // Custom icon for the vehicle
 const vehicleIcon = new L.Icon({
@@ -9,57 +10,43 @@ const vehicleIcon = new L.Icon({
   iconSize: [32, 32],
 });
 
-// Coordinates for the vehicle route (Delhi, Noida, Gurgaon)
-const pathCoordinates = [
-    [28.4595, 77.0266], // Gurgaon
-    [28.5355, 77.3910], // Noida
-    [28.7041, 77.1025], // Delhi
-];
-
-// Function to calculate intermediate points between two coordinates
-const interpolatePoints = (start, end, steps) => {
-  const latStep = (end[0] - start[0]) / steps;
-  const lngStep = (end[1] - start[1]) / steps;
-  const points = [];
-
-  for (let i = 0; i <= steps; i++) {
-    const lat = start[0] + latStep * i;
-    const lng = start[1] + lngStep * i;
-    points.push([lat, lng]);
-  }
-
-  return points;
-};
+const API_KEY = '5b3ce3597851110001cf624848a12141c5c84d6499c2843829c5f9f0'; // Replace with your API key
 
 const MapComponent = () => {
-  const [vehiclePosition, setVehiclePosition] = useState(pathCoordinates[0]);
-  const [interpolatedPath, setInterpolatedPath] = useState([]);
+  const [vehiclePosition, setVehiclePosition] = useState([28.4595, 77.0266]); // Initial position (Gurgaon)
+  const [route, setRoute] = useState([]);
   const [isMoving, setIsMoving] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [speed, setSpeed] = useState(1); // Speed state to control interval
   const intervalRef = useRef(null);
 
-  // Prepare the interpolated path
+  // Fetch route using OpenRouteService API
   useEffect(() => {
-    const totalInterpolatedPath = [];
-    const steps = 100; // Number of steps between each pair of coordinates for smooth movement
+    const fetchRoute = async () => {
+      const start = [77.0266, 28.4595]; // Start: Gurgaon [lng, lat]
+      const end = [77.1025, 28.7041]; // End: Delhi [lng, lat]
 
-    for (let i = 0; i < pathCoordinates.length - 1; i++) {
-      const start = pathCoordinates[i];
-      const end = pathCoordinates[i + 1];
-      const points = interpolatePoints(start, end, steps);
-      totalInterpolatedPath.push(...points);
-    }
+      const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${API_KEY}&start=${start}&end=${end}`;
 
-    setInterpolatedPath(totalInterpolatedPath);
+      try {
+        const response = await axios.get(url);
+        const coordinates = response.data.features[0].geometry.coordinates;
+        const formattedCoordinates = coordinates.map(([lng, lat]) => [lat, lng]); // Swap [lng, lat] to [lat, lng]
+        setRoute(formattedCoordinates);
+      } catch (error) {
+        console.error('Error fetching route:', error);
+      }
+    };
+
+    fetchRoute();
   }, []);
 
-  // Move the vehicle smoothly along the interpolated path based on speed
+  // Move the vehicle along the route
   useEffect(() => {
-    if (isMoving && interpolatedPath.length > 0) {
+    if (isMoving && route.length > 0) {
       intervalRef.current = setInterval(() => {
         setCurrentStep((prevStep) => {
-          if (prevStep < interpolatedPath.length - 1) {
+          if (prevStep < route.length - 1) {
             return prevStep + 1;
           } else {
             clearInterval(intervalRef.current);
@@ -70,7 +57,7 @@ const MapComponent = () => {
     }
 
     return () => clearInterval(intervalRef.current);
-  }, [isMoving, interpolatedPath, speed]);
+  }, [isMoving, route, speed]);
 
   // Start the vehicle movement
   const handleStartMovement = () => {
@@ -91,8 +78,8 @@ const MapComponent = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={interpolatedPath[currentStep] || pathCoordinates[0]} icon={vehicleIcon} />
-        <Polyline positions={pathCoordinates} color="blue" />
+        <Marker position={route[currentStep] || vehiclePosition} icon={vehicleIcon} />
+        <Polyline positions={route} color="blue" />
       </MapContainer>
 
       <button onClick={handleStartMovement} style={{ marginTop: '20px' }}>

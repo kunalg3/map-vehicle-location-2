@@ -1,9 +1,11 @@
-import './App.css';
+import React from 'react';
+import MapComponent from './components/MapComponent'
 
 function App() {
   return (
     <div className="App">
-      hello
+      <h1>Vehicle Movement on Map</h1>
+      <MapComponent />
     </div>
   );
 }

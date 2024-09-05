@@ -11,9 +11,9 @@ const vehicleIcon = new L.Icon({
 
 // Coordinates for the vehicle route (Delhi, Noida, Gurgaon)
 const pathCoordinates = [
-  [28.7041, 77.1025], // Example: Delhi
-  [28.5355, 77.3910], // Noida
-  [28.4595, 77.0266], // Gurgaon
+    [28.4595, 77.0266], // Gurgaon
+    [28.5355, 77.3910], // Noida
+    [28.7041, 77.1025], // Delhi
 ];
 
 // Function to calculate intermediate points between two coordinates
@@ -36,7 +36,7 @@ const MapComponent = () => {
   const [interpolatedPath, setInterpolatedPath] = useState([]);
   const [isMoving, setIsMoving] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [currentLeg, setCurrentLeg] = useState(0);
+  const [speed, setSpeed] = useState(1); // Speed state to control interval
   const intervalRef = useRef(null);
 
   // Prepare the interpolated path
@@ -54,7 +54,7 @@ const MapComponent = () => {
     setInterpolatedPath(totalInterpolatedPath);
   }, []);
 
-  // Move the vehicle smoothly along the interpolated path
+  // Move the vehicle smoothly along the interpolated path based on speed
   useEffect(() => {
     if (isMoving && interpolatedPath.length > 0) {
       intervalRef.current = setInterval(() => {
@@ -66,17 +66,22 @@ const MapComponent = () => {
             return prevStep; // Stop at the last point
           }
         });
-      }, 100); // Update vehicle position every 100ms for smooth movement
+      }, 1000 / speed); // Update interval depends on speed
     }
 
     return () => clearInterval(intervalRef.current);
-  }, [isMoving, interpolatedPath]);
+  }, [isMoving, interpolatedPath, speed]);
 
   // Start the vehicle movement
   const handleStartMovement = () => {
     if (!isMoving) {
       setIsMoving(true);
     }
+  };
+
+  // Speed control handler
+  const handleSpeedChange = (event) => {
+    setSpeed(parseInt(event.target.value, 10));
   };
 
   return (
@@ -93,6 +98,18 @@ const MapComponent = () => {
       <button onClick={handleStartMovement} style={{ marginTop: '20px' }}>
         Start Vehicle Movement
       </button>
+
+      <div style={{ marginTop: '20px' }}>
+        <label>Speed Control: {speed}x</label>
+        <input
+          type="range"
+          min="1"
+          max="10"
+          value={speed}
+          onChange={handleSpeedChange}
+          style={{ width: '100%' }}
+        />
+      </div>
     </div>
   );
 };

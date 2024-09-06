@@ -10,11 +10,10 @@ const vehicleIcon = new L.Icon({
   iconSize: [32, 32],
 });
 
-const API_KEY = '5b3ce3597851110001cf624848a12141c5c84d6499c2843829c5f9f0'; // Replace with your API key
+const API_KEY = process.env.REACT_APP_OPENROUTESERVICE_API_KEY;
 
 const MapComponent = () => {
-  const [vehiclePosition, setVehiclePosition] = useState([28.4595, 77.0266]); // Initial position (Gurgaon)
-  const [route, setRoute] = useState([]);
+  const [route, setRoute] = useState([]); // Removed vehiclePosition
   const [isMoving, setIsMoving] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [speed, setSpeed] = useState(1); // Speed state to control interval
@@ -73,12 +72,12 @@ const MapComponent = () => {
 
   return (
     <div>
-      <MapContainer center={vehiclePosition} zoom={10} style={{ height: '500px', width: '100%' }}>
+      <MapContainer center={[28.4595, 77.0266]} zoom={10} style={{ height: '500px', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={route[currentStep] || vehiclePosition} icon={vehicleIcon} />
+        <Marker position={route[currentStep] || [28.4595, 77.0266]} icon={vehicleIcon} />
         <Polyline positions={route} color="blue" />
       </MapContainer>
 

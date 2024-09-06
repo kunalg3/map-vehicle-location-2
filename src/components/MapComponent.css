@@ -1,0 +1,82 @@
+/* Container that holds everything */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Full-screen map with increased height */
+  .map {
+    width: 90%;
+    height: 75vh; /* Increase height to fill more space */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Controls (speed slider and button) in the same row */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    margin-top: 10px; /* Reduce space above the buttons */
+  }
+  
+  /* Style the Start Vehicle button */
+  .start-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .start-button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Style the speed control */
+  .speed-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 60%; /* Increased width to balance layout */
+  }
+  
+  .speed-control label {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .speed-control input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  /* Remove excessive space around buttons */
+  @media (max-width: 768px) {
+    .map {
+      width: 95%;
+      height: 65vh; /* Slightly smaller for smaller screens */
+    }
+  
+    .controls {
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+    }
+  
+    .speed-control {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+  

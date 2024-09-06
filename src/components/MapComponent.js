@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
+import './MapComponent.css'; // Import the external CSS file
 
 // Custom icon for the vehicle
 const vehicleIcon = new L.Icon({
@@ -71,30 +72,30 @@ const MapComponent = () => {
   };
 
   return (
-    <div>
-      <MapContainer center={[28.4595, 77.0266]} zoom={10} style={{ height: '500px', width: '100%' }}>
+    <div className="container">
+      <MapContainer className="map" center={[28.4595, 77.0266]} zoom={10}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <Marker position={route[currentStep] || [28.4595, 77.0266]} icon={vehicleIcon} />
         <Polyline positions={route} color="blue" />
       </MapContainer>
 
-      <button onClick={handleStartMovement} style={{ marginTop: '20px' }}>
-        Start Vehicle Movement
-      </button>
+      <div className="controls">
+        <button className="start-button" onClick={handleStartMovement}>
+          Start Vehicle
+        </button>
 
-      <div style={{ marginTop: '20px' }}>
-        <label>Speed Control: {speed}x</label>
-        <input
-          type="range"
-          min="1"
-          max="10"
-          value={speed}
-          onChange={handleSpeedChange}
-          style={{ width: '100%' }}
-        />
+        <div className="speed-control">
+          <label>Speed Control: {speed}x</label>
+          <input
+            type="range"
+            min="1"
+            max="10"
+            value={speed}
+            onChange={handleSpeedChange}
+          />
+        </div>
       </div>
     </div>
   );

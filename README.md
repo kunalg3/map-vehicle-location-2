@@ -44,6 +44,10 @@ This project is a React-based web application that simulates real-time vehicle m
 3. Use the Speed Control slider to adjust the speed of the vehicle.
 4. Watch the vehicle move along the route in real-time.
 
+## Screenshot
+
+![Vehicle Tracking Demo](./src/assets/map_ss.PNG)
+
 ## File Structure
 
 - src/components/MapComponent.js: The core component for rendering the map, fetching the route, and managing the vehicle's movement.

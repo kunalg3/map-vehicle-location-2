@@ -21,10 +21,10 @@ This project is a React-based web application that simulates real-time vehicle m
 
 1. Clone the repository:
    ```bash
-   git clone <your-repository-link>
+   git clone https://github.com/kunalg3/map-location-direction.git
 2. Navigate to the project directory:
     ```bash
-    cd vehicle-movement-map
+    cd map-location-direction
 3. Install dependencies:
     ```bash
     npm install
@@ -34,7 +34,7 @@ This project is a React-based web application that simulates real-time vehicle m
 5. Start the development server:
     ```bash
     npm start
-6. Open the app in your browser:
+6. Open the app in your browser on port 3000 or any other port:
     http://localhost:3000
 
 ## How to Use

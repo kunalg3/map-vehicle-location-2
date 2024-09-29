@@ -11,28 +11,37 @@ const vehicleIcon = new L.Icon({
   iconSize: [32, 32],
 });
 
+const API_KEY = process.env.REACT_APP_OPENROUTESERVICE_API_KEY;
+
 const MapComponent = () => {
-  const [route, setRoute] = useState([]); // Route array
+  const [route, setRoute] = useState([]); // Removed vehiclePosition
   const [isMoving, setIsMoving] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [speed, setSpeed] = useState(1); // Speed state to control interval
   const intervalRef = useRef(null);
 
-  // Fetch dummy route data from backend API
+  // Fetch route using OpenRouteService API
   useEffect(() => {
     const fetchRoute = async () => {
+      const start = [77.0266, 28.4595]; // Start: Gurgaon [lng, lat]
+      const end = [77.1025, 28.7041]; // End: Delhi [lng, lat]
+  
+      const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${API_KEY}&start=${start}&end=${end}`;
+  
       try {
-        const response = await axios.get('http://localhost:5000/api/route'); // Fetch dummy data from the backend
-        const routeData = response.data;
-        const formattedCoordinates = routeData.map(point => [point.latitude, point.longitude]);
+        const response = await axios.get(url);
+        const coordinates = response.data.features[0].geometry.coordinates;
+        const formattedCoordinates = coordinates.map(([lng, lat]) => [lat, lng]); // Swap [lng, lat] to [lat, lng]
         setRoute(formattedCoordinates);
+        console.log('Route fetched:', formattedCoordinates); // Add this line to log the route
       } catch (error) {
         console.error('Error fetching route:', error);
       }
     };
-
+  
     fetchRoute();
   }, []);
+  
 
   // Move the vehicle along the route
   useEffect(() => {
@@ -66,12 +75,11 @@ const MapComponent = () => {
 
   return (
     <div className="container">
-      <MapContainer className="map" center={[17.385044, 78.486671]} zoom={10}>
+      <MapContainer className="map" center={[28.4595, 77.0266]} zoom={10}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {/* Show the vehicle moving along the route */}
-        <Marker position={route[currentStep] || [17.385044, 78.486671]} icon={vehicleIcon} />
+        <Marker position={route[currentStep] || [28.4595, 77.0266]} icon={vehicleIcon} />
         <Polyline positions={route} color="blue" />
       </MapContainer>
 

@@ -46,7 +46,7 @@ This project is a React-based web application that simulates real-time vehicle m
 
 ## Screenshot
 
-![Vehicle Tracking Demo](./src/assets/map_ss.PNG)
+![Vehicle Tracking Demo](./frontend/src/assets/map_ss.PNG)
 
 ## File Structure
 
